@@ -1,5 +1,9 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
-deps
+deps/usr
+deps/src
+deps/builds
+deps/downloads
+deps/deps.jl
 *~

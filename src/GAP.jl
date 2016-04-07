@@ -11,7 +11,7 @@ import Base.convert
 export @g_str
 
 const GAP_VERSION = "4.8.3"
-const GAP_DIR = joinpath(Pkg.dir(string(current_module())),"deps","gap-"*GAP_VERSION)
+const GAP_DIR = joinpath(Pkg.dir(string(current_module())),"deps","usr","share","gap-"*GAP_VERSION)
 
 type GapError <: Exception
     msg::AbstractString
