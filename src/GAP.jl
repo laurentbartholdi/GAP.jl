@@ -6,7 +6,7 @@ else
     error("GAP not properly installed. Please run Pkg.build(\"GAP\")")
 end
 
-import Base.convert
+import Base: convert, +
 
 export @g_str
 
@@ -68,6 +68,8 @@ function __init__()
         eval(:($(convert(Symbol,"_"*NameGVar(gvar))) = $(ValAutoGVar(gvar))))
     end
 end
+
++(a::Obj,b::Obj) = _SUM(a,b)
 
 ################################################################
 
