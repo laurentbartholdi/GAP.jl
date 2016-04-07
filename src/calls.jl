@@ -17,8 +17,11 @@ macro CALL_nARGS(obj,args...)
     quote
         f = FuncObj($(esc(obj)))
         @mark_stack_bottom()
-        ccall(f.handler[$nargs],Obj,$(Expr(:tuple,[Obj for i in 1:nargs]...)),$(esc(obj)),$(args...))
+        ccall(f.handler[$nargs],Obj,$(Expr(:tuple,[Obj for arg in 1:nargs]...)),$(esc(obj)),$([esc(arg) for arg in args]...))
     end
 end
 
-(obj::Obj)(args...) = @CALL_nARGS(obj,map(Obj,args)...)
+function (obj::Obj)(args...)
+    newargs = map(Obj,args)
+    @CALL_nARGS(obj,newargs...)
+end

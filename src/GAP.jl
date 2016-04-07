@@ -59,13 +59,14 @@ function __init__()
     error_msg = libgap_get_error()
     length(error_msg)>0 && error("libGAP initialization failed: ", error_msg)
 
+    for gvar=UInt(1):unsafe_load(CountGVars)
+        eval(:($(convert(Symbol,"_"*NameGVar(gvar))) = $(ValAutoGVar(gvar))))
+    end
+
     libgap_finish_interaction()
     libgap_set_error_handler(error_handler)
     ENV["__LIBGAP_INITIALIZED"] = true
-    end
-
-    for gvar=UInt(1):unsafe_load(CountGVars)
-        eval(:($(convert(Symbol,"_"*NameGVar(gvar))) = $(ValAutoGVar(gvar))))
+    println(BottomLVars)
     end
 end
 
@@ -76,13 +77,14 @@ end
 function evaluate(input::AbstractString)
     global in_interaction
     const Symbol = @libgapglobal(:libGAP_Symbol,UInt)
-    if input[end] != ';'
+
+    if length(input)==0 || input[end] != ';'
         input *= ";"
     end
     libgap_start_interaction(input)
     in_interaction = true
     status = ReadEvalCommand(unsafe_load(BottomLVars))
-    
+
     status == STATUS_END || println("Weird, interpreter not in end state")
 
     unsafe_load(Symbol) == S_SEMICOLON || println("Weird, no semicolon read")
