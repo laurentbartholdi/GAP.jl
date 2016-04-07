@@ -18,6 +18,7 @@ provides(Sources, URI("https://bitbucket.org/vbraun/libgap/downloads/libgap-"*GA
 provides(BuildProcess, Autotools(libtarget = "src/libgap.la"), libgap)
 
 depsdir = BinDeps.depsdir(libgap)
+run(`mkdir -p $(joinpath(depsdir,"downloads"))`)
 gaptarball = joinpath(depsdir,"downloads/gap-"*GAP_VERSION*".tar.gz")
 gapdir = joinpath(depsdir,"usr","share","gap-"*GAP_VERSION)
 isfile(gaptarball) || download("http://www.gap-system.org/pub/gap/gap48/tar.gz/gap4r8p3_2016_03_19-22_17.tar.gz", gaptarball)
