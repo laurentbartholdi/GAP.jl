@@ -6,7 +6,7 @@ else
     error("GAP not properly installed. Please run Pkg.build(\"GAP\")")
 end
 
-import Base: convert, +, -, *, /
+import Base: convert, promote_rule, +, -, *, /
 
 export @g_str, Obj
 
@@ -70,10 +70,24 @@ function __init__()
     end
 end
 
+promote_rule(::Type{Obj},::Type{Any}) = Obj
+promote_rule(::Type{Any},::Type{Obj}) = Obj
+
 +(a::Obj,b::Obj) = _SUM(a,b)
++(a::Obj,b::Any) = _SUM(a,b)
++(a::Any,b::Obj) = _SUM(a,b)
+
 -(a::Obj,b::Obj) = _DIFF(a,b)
+-(a::Obj,b::Any) = _DIFF(a,b)
+-(a::Any,b::Obj) = _DIFF(a,b)
+
 *(a::Obj,b::Obj) = _PROD(a,b)
+*(a::Obj,b::Any) = _PROD(a,b)
+*(a::Any,b::Obj) = _PROD(a,b)
+
 /(a::Obj,b::Obj) = _QUO(a,b)
+/(a::Obj,b::Any) = _QUO(a,b)
+/(a::Any,b::Obj) = _QUO(a,b)
 
 ################################################################
 
