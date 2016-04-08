@@ -6,9 +6,9 @@ else
     error("GAP not properly installed. Please run Pkg.build(\"GAP\")")
 end
 
-import Base: convert, +
+import Base: convert, +, -, *, /
 
-export @g_str
+export @g_str, Obj
 
 const GAP_VERSION = "4.8.3"
 const GAP_DIR = joinpath(Pkg.dir(string(current_module())),"deps","usr","share","gap-"*GAP_VERSION)
@@ -71,6 +71,9 @@ function __init__()
 end
 
 +(a::Obj,b::Obj) = _SUM(a,b)
+-(a::Obj,b::Obj) = _DIFF(a,b)
+*(a::Obj,b::Obj) = _PROD(a,b)
+/(a::Obj,b::Obj) = _QUO(a,b)
 
 ################################################################
 
