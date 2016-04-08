@@ -43,30 +43,37 @@ function error_handler(msg::Cstring)
     throw(GapError(bytestring(msg)))
 end
 
-function __init__()
-    try
-        ENV["__LIBGAP_INITIALIZED"]
-        println("LibGAP already initialized")
-    catch
-    println("LibGAP: using gap library at ",GAP_DIR)
-    const memory_pool = "1000M"
+function do_gap_init(memory_pool::Int,memory_start::Int)
+    pool_string = string(memory_pool>>20)*"M"
+    start_string = string(memory_start>>20)*"M"
+
+    print_with_color(:blue,"LibGAP: using gap library at $GAP_DIR\n",
+            "Pool memory=$pool_string, start memory=$start_string\n")
     libgap_set_error_handler(no_error_handler);
 
-    libgap_initialize(["juliagap","-l",GAP_DIR,"-o",memory_pool,"-s",memory_pool,"-m","64M","-q","-T",C_NULL])
+    libgap_initialize(["juliagap","-l",GAP_DIR,"-o",pool_string,"-s",pool_string,"-m",start_string,"-q","-T",C_NULL])
     libgap_start_interaction("")
     output_msg = libgap_get_output()
     length(output_msg)>0 && error("libGAP initialization failed: ", output_msg)
     error_msg = libgap_get_error()
     length(error_msg)>0 && error("libGAP initialization failed: ", error_msg)
-
-    for gvar=UInt(1):unsafe_load(CountGVars)
-        eval(:($(convert(Symbol,"_"*NameGVar(gvar))) = $(ValAutoGVar(gvar))))
-    end
-
     libgap_finish_interaction()
+
     libgap_set_error_handler(error_handler)
-    ENV["__LIBGAP_INITIALIZED"] = true
-    println(BottomLVars)
+
+    # somehow this bit of black magic seems to prevent a segfault
+    libgap_start_interaction("0;;")
+    status = ReadEvalCommand(unsafe_load(BottomLVars))    
+    libgap_finish_interaction()
+end
+
+function __init__()
+    try
+        ENV["__LIBGAP_INITIALIZED"]
+        print_with_color(:blue,"LibGAP already initialized\n")
+    catch
+        do_gap_init(1<<30,1<<26)
+        ENV["__LIBGAP_INITIALIZED"] = true
     end
 end
 
