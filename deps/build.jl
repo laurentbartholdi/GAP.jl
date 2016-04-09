@@ -15,7 +15,7 @@ GAP_VERSION = "4.8.3"
 # build from source
 
 provides(Sources, URI("https://bitbucket.org/vbraun/libgap/downloads/libgap-"*GAP_VERSION*".tar.gz"), libgap)
-provides(BuildProcess, Autotools(libtarget = "src/libgap.la", include_dirs = ["."]), libgap)
+provides(BuildProcess, Autotools(libtarget = "src/libgap.la", include_dirs = ["."], configure_options = ["--with-gmp="*joinpath(JULIA_HOME,"..")]), libgap)
 
 depsdir = BinDeps.depsdir(libgap)
 run(`mkdir -p $(joinpath(depsdir,"downloads"))`)
